@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+__author__ = 'ube'
 
+import os
 from daemon import runner
 import serial
 from math import radians, cos, sin, asin, sqrt
@@ -18,6 +20,7 @@ class Marainer():
         self.pidfile_timeout = 5
 
     def run(self):
+        firstrun = True
         db = sqlite3.connect("/home/pi/marainer.db")
         c = db.cursor()
         config = {}
@@ -54,18 +57,19 @@ class Marainer():
                     if valid:
                         lat = round(float(a[3][:2]) + (float(a[3][2:]) * 60 / 3600), 6)
                         lon = round(float(a[5][:3]) + (float(a[5][3:]) * 60 / 3600), 6)
-                        if int(config['lock']):
+                        if int(config['lock']) or firstrun:
                             c.execute("update config set value = '%f' where key = 'lockLat'" % lat)
                             c.execute("update config set value = '%f' where key = 'lockLon'" % lon)
                             c.execute("update config set value = '0' where key = 'lock'" )
+                            config['lock'] = "0"
+                            firstrun = False
                             db.commit()
                         c.execute("select * from location")
+                        posData = c.fetchone()
                         diff = self.haversine(lon, lat, float(config['lockLon']), float(config['lockLat']))
-                        if diff > allowedDiff:
-                            url = "http://maps.google.com/maps?z=12&t=m&q=loc:%s%f+%s%f" % (latPrefix, lat,
-                                                                                            lonPrefix, lon)
-                            c.execute("insert into alarm (time, lon, lat, url, ack) values (%d, %f, %f, '%s', 0)" %
-                                      (t, lon, lat, url));
+                        if diff > allowedDiff and int(config['armed']):
+                            url = "http://maps.google.com/maps?z=12&t=m&q=loc:%s%f+%s%f" % (latPrefix, lat, lonPrefix, lon)
+                            c.execute("insert into alarm (time, lon, lat, url, ack) values (%d, %f, %f, '%s', 0)" % (t, lon, lat, url));
                         c.execute("update location set lon = %f, lat = %f" % (lon, lat))
                         db.commit()
                     time.sleep(float(config['interval']))
