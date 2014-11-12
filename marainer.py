@@ -62,8 +62,10 @@ class Marainer():
                         c.execute("select * from location")
                         diff = self.haversine(lon, lat, float(config['lockLon']), float(config['lockLat']))
                         if diff > allowedDiff:
-                            url = "http://maps.google.com/maps?z=12&t=m&q=loc:%s%f+%s%f" % (latPrefix, lat, lonPrefix, lon)
-                            c.execute("insert into alarm (time, lon, lat, url, ack) values (%d, %f, %f, '%s', 0)" % (t, lon, lat, url));
+                            url = "http://maps.google.com/maps?z=12&t=m&q=loc:%s%f+%s%f" % (latPrefix, lat,
+                                                                                            lonPrefix, lon)
+                            c.execute("insert into alarm (time, lon, lat, url, ack) values (%d, %f, %f, '%s', 0)" %
+                                      (t, lon, lat, url));
                         c.execute("update location set lon = %f, lat = %f" % (lon, lat))
                         db.commit()
                     time.sleep(float(config['interval']))
