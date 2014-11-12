@@ -1,0 +1,12 @@
+CREATE TABLE alarm (id INTEGER PRIMARY KEY ASC, time INTEGER, lon REAL, lat REAL, url TEXT, ack INTEGER);
+CREATE TABLE config (key TEXT UNIQUE, value TEXT);
+CREATE TABLE location (lon, lat);
+INSERT INTO "config" VALUES('lockLat','00.000000');
+INSERT INTO "config" VALUES('lockLon','00.000000');
+INSERT INTO "config" VALUES('allowedDiff','10');
+INSERT INTO "config" VALUES('interval','10');
+INSERT INTO "config" VALUES('serialPort','/dev/ttyAMA0');
+INSERT INTO "config" VALUES('serialSpeed','9600');
+INSERT INTO "config" VALUES('updateConfig','5');
+INSERT INTO "config" VALUES('lock','0');
+INSERT INTO "config" VALUES('armed','1');
