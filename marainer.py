@@ -81,7 +81,7 @@ class Marainer():
                         if diff > allowedDiff and int(config['armed']):
                             url = "http://maps.google.com/maps?z=12&t=m&q=loc:%s%f+%s%f" % (latPrefix, lat,
                                                                                             lonPrefix, lon)
-                            c.execute("insert into alarm (time, lon, lat, url, ack) values (%d, %f, %f, '%s', 0)"§
+                            c.execute("insert into alarm (time, lon, lat, url, ack) values (%d, %f, %f, '%s', 0)"
                                       % (t, lon, lat, url))
                         c.execute("update location set lon = %f, lat = %f, time = %d" % (lon, lat, time.time()))
                         db.commit()
