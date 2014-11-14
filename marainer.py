@@ -41,7 +41,6 @@ class Marainer():
             config[conf[0]] = conf[1]
         allowedDiff = float(config['allowedDiff'])
         s = serial.Serial(config['serialPort'], int(config['serialSpeed']), timeout=1)
-
         while True:  # Wait for data
             if time.time() - updateTime > int(config['updateConfig']) and int(config['updateConfig']):
                 updateTime = time.time()
@@ -55,7 +54,8 @@ class Marainer():
                 if data.startswith("$GPRMC"):
                     t = time.time()
                     a = data.strip().split(",")
-                    if len(a) != 13:
+                    if len(a) != 13 or not a[3].split(".")[1].isdigit() or not a[5].split(".")[1].isdigit():
+                        # There are some problems with junk, this ought to do it.
                         continue
                     latPrefix = ""
                     lonPrefix = ""
@@ -86,6 +86,8 @@ class Marainer():
                         c.execute("update location set lon = %f, lat = %f, time = %d" % (lon, lat, time.time()))
                         db.commit()
                     time.sleep(float(config['interval']))
+                    s.flush() 
+
 
     def haversine(self,lon1, lat1, lon2, lat2):
         lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
