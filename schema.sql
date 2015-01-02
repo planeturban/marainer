@@ -1,6 +1,7 @@
 CREATE TABLE alarm (id INTEGER PRIMARY KEY ASC, time INTEGER, lon REAL, lat REAL, url TEXT, ack INTEGER);
 CREATE TABLE config (key TEXT UNIQUE, value TEXT);
-CREATE TABLE location (lon, lat);
+CREATE TABLE location (lon integer default 0, lat integer default 0, time INTEGER default 0);
+insert into location values (0,0,0);
 INSERT INTO "config" VALUES('lockLat','00.000000');
 INSERT INTO "config" VALUES('lockLon','00.000000');
 INSERT INTO "config" VALUES('allowedDiff','10');
